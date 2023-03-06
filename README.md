@@ -1,6 +1,6 @@
 # MineGPT
 
-Release is for 1.18.2.
+Release is for 1.18.2. Should compile to 1.19.x.
 
 Take a book and quill, write what you want to happen in minecraft, and then name it "gpt". The plugin will generate the necessary command block code then execute it for you.
 

@@ -1,0 +1,9 @@
+name: RyanPlugins
+version: '${project.version}'
+main: ryan.ryanplugins.RyanPlugins
+api-version: 1.18
+commands:
+  gpt:
+    description: Does GPT Test
+    aliases: g
+    usage: /gpt

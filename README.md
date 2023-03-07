@@ -33,6 +33,7 @@ Example Prompts To Try:
 5. Every tick summon a bat at an arrow
 6. When any player holds a diamond, put a diamond block below them.
 7. Change all grass to netherrack in a radius around any player. Change all water to lava in a radius around any player. Change all dirt to netherrack in a radius around any player. Change all sand and stone to soul sand in a radius around any player.
+8. Spawn a TNT on every item entity (Grey Goo Scenario)
 
 ## License
 

@@ -35,6 +35,8 @@ Example Prompts To Try:
 7. Change all grass to netherrack in a radius around any player. Change all water to lava in a radius around any player. Change all dirt to netherrack in a radius around any player. Change all sand and stone to soul sand in a radius around any player.
 8. Spawn a TNT on every item entity (Grey Goo Scenario)
 9. For every pig not tagged "anvil" place an anvil block 10 blocks above that pig, then tag that pig "anvil".
+10. Every tick spawn primed TNT at all arrows.
+11. Every tick spawn lightning at all arrows.
 
 ## License
 

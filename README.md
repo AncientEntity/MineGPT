@@ -8,9 +8,9 @@ Release is for 1.18.2. Should compile to 1.19.x.
 Sometimes the ChatGPT proxy runs out of monthly quota, if this occurs you'll have to run a GPT server locally. Luckily it's free to run. All you need is Python 3.X, Playwright and a ChatGPT account.
 Here's how to setup a local server if needed:
 1. Install python (Python.org) Tested with python 3.9 but any Python 3.X should work.
-2. CMD: pip install git+https://github.com/mmabrouk/chatgpt-wrapper
-3. CMD: playwright install firefox (Previous command also installs playwright)
-4. CMD: chatgpt install (will open a firefox browser, you'll have to log into chatgpt with your account once and it'll remember it)
+2. CMD: `pip install git+https://github.com/mmabrouk/chatgpt-wrapper`
+3. CMD: `playwright install firefox` (Previous command also installs playwright)
+4. CMD: `chatgpt install` (will open a firefox browser, you'll have to log into chatgpt with your account once and it'll remember it)
 5. Now just run the "chatgptwebproxy.py" file while the plugin is running.
 6. If it is still trying to use the external proxy use `/gpt proxy` or `/gpt local` to toggle it to your local proxy.
 

@@ -1,6 +1,6 @@
-name: RyanPlugins
+name: MineGPT
 version: '${project.version}'
-main: ryan.ryanplugins.RyanPlugins
+main: ryan.ryanplugins.MineGPT
 api-version: 1.18
 commands:
   gpt:

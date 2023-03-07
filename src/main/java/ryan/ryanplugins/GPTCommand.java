@@ -13,11 +13,12 @@ import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import java.io.*;
+import java.net.*;
 
 public class GPTCommand implements CommandExecutor {
 
@@ -30,7 +31,22 @@ public class GPTCommand implements CommandExecutor {
 
         if(sender instanceof Player) {
 
-            if(args[0].equals("kill")) { currentCommands = new String[0];return false;}
+            if(args[0].equals("kill")) {
+                currentCommands = new String[0];
+                player.sendMessage(ChatColor.translateAlternateColorCodes('&', "Previous GPT Killed."));
+                return true;
+
+            }
+            if(args[0].equals("local") || args[0].equals("proxy")) {
+                useLocal = !useLocal;
+                if(useLocal) {
+                    player.sendMessage(ChatColor.translateAlternateColorCodes('&', "Now using local."));
+                } else {
+                    player.sendMessage(ChatColor.translateAlternateColorCodes('&', "Now using proxy."));
+                }
+                return true;
+
+            }
 
             String response = Arrays.toString(generateCommands(ArrayToString(args)));
             player.sendMessage(ChatColor.translateAlternateColorCodes('&',response));
@@ -43,7 +59,7 @@ public class GPTCommand implements CommandExecutor {
     }
 
     public static String[] generateCommands(String prompt) {
-        String totalPrompt = "You are an expert in writing minecraft commands. The user gives you a prompt and you turn it into minecraft commands for minecraft the game. Don't give any details or explanation about the code you've written, only give the commands. Format it in a list. These commands will be chained into commands blocks and be executed every tick. Prompt: "+prompt+". Commands:";
+        String totalPrompt = "You are an expert in writing minecraft commands. The user gives you a prompt and you turn it into minecraft commands for minecraft the game. Don't give any details or explanation about the code you've written, only give the commands. Format it in a numbered list. These commands will be chained into commands blocks and be executed every tick. Prompt: "+prompt+". Commands:";
         try {
             String response = generateResponse(totalPrompt);
             String[] commands = splitter(response);
@@ -57,17 +73,24 @@ public class GPTCommand implements CommandExecutor {
     }
 
     private static final String API_URL = "https://chatgpt-api.shn.hk/v1/";
+    private static boolean useLocal = true; //If you have a chatGPT wrapper locally setup.
 
     public static String generateResponse(String prompt) throws IOException {
+
+        if(useLocal) {
+            return RequestGPTFromLocal(prompt);
+        }
+
         // Set up the HTTP connection
         URL url = new URL(API_URL);
         HttpURLConnection connection = (HttpURLConnection) url.openConnection();
         connection.setRequestMethod("POST");
         connection.setRequestProperty("Content-Type", "application/json");
-        //connection.setRequestProperty("Authorization", "Bearer YOUR_API_KEY");
+        //connection.setRequestProperty("Authorization", "Bearer AUTH HERE");
 
         // Construct the request body
-        String requestBody = "{\"model\": \"gpt-3.5-turbo\", \"messages\": [{\"role\": \"user\", \"content\": \""+prompt+"\"}]}";
+        //String requestBody = "{\"model\": \"gpt-3.5-turbo\", \"messages\": [{\"role\": \"user\", \"content\": \""+prompt+"\"}]}";
+        String requestBody = "{\"prompt\": \"" + prompt + "\", \"max_tokens\": 100}";
 
         //System.out.println(requestBody);
 
@@ -145,19 +168,33 @@ public class GPTCommand implements CommandExecutor {
 
     public static String[] splitter(String s) {
 
-        System.out.println(Arrays.toString(s.split("\\r?\\n")));
+        String[] commandArray;
+        if(useLocal) {
+            commandArray = s.split(Pattern.quote("\n"));
+        } else {
+            commandArray = s.split(Pattern.quote("\\n"));
+        }
 
-        String[] commandArray = s.split(Pattern.quote("\\n"));
         for (int i = 0; i < commandArray.length; i++) {
-            if(commandArray[i].equals(" ")) {
+            if (commandArray[i].equals(" ")) {
                 commandArray[i] = "";
                 continue;
             }
 
-            if(commandArray[i].length() >= 3) {
-                commandArray[i] = commandArray[i].replaceAll("^[0-9]+\\.\\s*", "");
-                commandArray[i] = formatMinecraftCommand(commandArray[i]);
+            commandArray[i] = commandArray[i].replaceAll("^[0-9]+\\.\\s*", "");
+            commandArray[i] = formatMinecraftCommand(commandArray[i]);
+
+            commandArray[i] = commandArray[i].trim();
+
+
+            if (commandArray[i].startsWith("/")) {
+                commandArray[i] = commandArray[i].substring(0);
             }
+            if (commandArray[i].startsWith("- /")) {
+                commandArray[i] = commandArray[i].substring(2);
+            }
+
+
         }
 
         System.out.println(Arrays.toString(commandArray));
@@ -171,4 +208,34 @@ public class GPTCommand implements CommandExecutor {
         }
         return command;
     }
+
+
+    public static String RequestGPTFromLocal(String prompt) {
+        String hostName = "127.0.0.1";
+        int portNumber = 23484;
+
+        try (Socket socket = new Socket(hostName, portNumber);
+             PrintWriter out = new PrintWriter(socket.getOutputStream(), true);
+             BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()))) {
+            out.println(prompt);
+
+            // Wait for a response from the server
+            String response = "";
+            boolean still = true;
+            while(still == true) {
+                String line = in.readLine();
+                if(line == null || line == "") {still = false; break;}
+                else {response = response +"\n"+ line;}
+            }
+            return response;
+        } catch (UnknownHostException e) {
+            System.err.println("Don't know about host " + hostName);
+        } catch (IOException e) {
+            System.err.println("Couldn't get I/O for the connection to " + hostName);
+        }
+
+
+        return "";
+    }
+
 }

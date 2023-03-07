@@ -24,7 +24,7 @@ public class BookSignListener implements Listener {
         Player player = event.getPlayer();
         BookMeta bookMeta = event.getNewBookMeta();
 
-        if(bookMeta.getTitle().equals("gpt")) {
+        if(bookMeta.getTitle().startsWith("gpt")) {
             //plugin.getLogger().info("Page: " + bookMeta.getPage(0));
             player.sendMessage(ChatColor.translateAlternateColorCodes('&',"GPT Processing"));
             String[] commands = GPTCommand.generateCommands(bookMeta.getPages().get(0));
@@ -40,6 +40,9 @@ public class BookSignListener implements Listener {
 
             GPTCommand.currentCommands = commands;
 
+            event.setCancelled(true);
+
         }
     }
+
 }

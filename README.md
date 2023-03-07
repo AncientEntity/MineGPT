@@ -10,3 +10,4 @@ Example Prompts To Try:
 3. Remove all blocks around all arrows in a radius 3 sphere and replace it with air. Don't destroy the arrow.
 4. Remove all blocks around all players in a radius 3 sphere and replace it with air
 5. Every tick summon a bat at an arrow
+6. When any player holds a diamond, put a diamond block below them.
